@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Our Story ❤️</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── RESET & BASE ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #0d0608;
+    color: #f5e8e8;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none; /* Prevents browser scroll interference during game */
+  }
+
+  :root {
+    --rose:     #e8637a;
+    --blush:    #f0a0b0;
+    --deep:     #8b1a2f;
+    --text:     #f5e8e8;
+    --serif:    'Cormorant Garamond', Georgia, serif;
+    --border:   rgba(232,99,122,0.2);
+  }
+
+  /* ─── BACKGROUNDS ─────────────────────────────────────────── */
+  .glow-bg {
+    position: fixed; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse 60% 40% at 50% 85%, rgba(139,26,47,0.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  #hearts-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+  .heart-float {
+    position: absolute; bottom: -40px; font-size: 14px; opacity: 0;
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    10% { opacity: 0.4; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+  }
+
+  /* ─── SCREENS ───────────────────────────────────────────────── */
+  .screen {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; text-align: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: all; }
+
+  /* ─── TYPOGRAPHY ────────────────────────────────────────────── */
+  .title-serif { font-family: var(--serif); font-size: 3.5rem; color: var(--text); }
+  .level-title { font-family: var(--serif); font-size: 2rem; margin-bottom: 10px; }
+  .deco-line { width: 50px; height: 1px; background: var(--rose); margin: 15px auto; }
+
+  /* ─── GAME PIGEON UI COMPONENTS ────────────────────────────── */
+  #balloon-arena {
+    position: relative; width: 100%; max-width: 350px; height: 250px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden; margin-bottom: 20px;
+  }
+
+  .balloon {
+    position: absolute; font-size: 2.5rem; bottom: -60px;
+    animation: balloonRise 4s linear forwards;
+    filter: drop-shadow(0 0 10px rgba(232,99,122,0.5));
+  }
+  @keyframes balloonRise {
+    from { transform: translateY(0); }
+    to { transform: translateY(-350px); }
+  }
+
+  .balloon.popping { animation: pop 0.2s ease-out forwards; }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .dart-visual {
+    position: fixed; width: 4px; height: 30px; background: var(--rose);
+    border-radius: 2px; box-shadow: 0 0 10px var(--rose); z-index: 100;
+  }
+
+  .message-area {
+    min-height: 80px; width: 100%; max-width: 320px; padding: 20px;
+    background: rgba(10, 4, 6, 0.8); border: 1px solid var(--rose);
+    border-radius: 15px; margin: 15px 0; transition: transform 0.3s;
+  }
+  .message-area.pulse { transform: scale(1.05); }
+  .message-text { font-family: var(--serif); font-style: italic; opacity: 0; transition: 0.5s; }
+  .message-text.visible { opacity: 1; }
+
+  .dots { display: flex; gap: 10px; margin-bottom: 20px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(232,99,122,0.2); }
+  .dot.filled { background: var(--rose); box-shadow: 0 0 8px var(--rose); }
+
+  .btn-primary {
+    padding: 12px 30px; border-radius: 25px; border: 1px solid var(--rose);
+    background: transparent; color: white; text-transform: uppercase;
+    letter-spacing: 2px; cursor: pointer; transition: 0.3s;
+  }
+  .btn-primary:disabled { opacity: 0.2; }
+
+  /* ─── SHAKE EFFECT ─── */
+  .shake { animation: shake 0.3s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+<div id="hearts-layer"></div>
+
+<!-- INTRO SCREEN -->
+<div class="screen active" id="s-intro">
+  <h1 class="title-serif">Our Story</h1>
+  <div class="deco-line"></div>
+  <p>A little game made just for you...</p>
+  <br>
+  <button class="btn-primary" onclick="goToLevel(1)">Play ❤️</button>
+</div>
+
+<!-- LEVEL 1: BALLOON POP -->
+<div class="screen" id="s-level1">
+  <h2 class="level-title">The Beginning</h2>
+  
+  <div id="balloon-arena">
+    <div style="position:absolute; bottom:10px; width:100%; font-size:10px; opacity:0.5;">SWIPE UP TO THROW 🎯</div>
+  </div>
+
+  <div class="message-area" id="msg-card">
+    <div class="message-text" id="msg-text">Pop balloons to reveal memories...</div>
+  </div>
+
+  <div class="dots">
+    <div class="dot" id="d1-0"></div>
+    <div class="dot" id="d1-1"></div>
+    <div class="dot" id="d1-2"></div>
+  </div>
+
+  <button class="btn-primary" id="btn-next" disabled onclick="alert('You unlocked it! Final screen next.')">Next Chapter</button>
+</div>
+
+<script>
+const memories = [
+  "I remember the first time I saw your eyes, Emma Jean.",
+  "Even with the distance, you were always in my heart.",
+  "I'd still choose you, over and over again."
+];
+
+let balloonPops = 0;
+let activeBalloons = [];
+let swipeStart = null;
+let gameActive = false;
+
+function goToLevel(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-level'+n).classList.add('active');
+  if(n === 1) startGame();
+}
+
+function startGame() {
+  gameActive = true;
+  setInterval(() => {
+    if (gameActive && activeBalloons.length < 3 && balloonPops < 3) {
+      spawnBalloon();
+    }
+  }, 1500);
+}
+
+function spawnBalloon() {
+  const arena = document.getElementById('balloon-arena');
+  const b = document.createElement('div');
+  b.className = 'balloon';
+  b.textContent = ['🎈', '💖', '🌸'][Math.floor(Math.random()*3)];
+  b.style.left = (Math.random() * 80 + 10) + '%';
+  arena.appendChild(b);
+  activeBalloons.push(b);
+
+  b.addEventListener('animationend', () => {
+    b.remove();
+    activeBalloons = activeBalloons.filter(x => x !== b);
+  });
+}
+
+/* ─── PHYSICS THROW LOGIC ─── */
+const arena = document.getElementById('s-level1');
+
+arena.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  swipeStart = { x: t.clientX, y: t.clientY, time: Date.now() };
+});
+
+arena.addEventListener('touchend', (e) => {
+  if (!swipeStart) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - swipeStart.x;
+  const dy = t.clientY - swipeStart.y;
+  const duration = Date.now() - swipeStart.time;
+
+  if (dy < -50 && duration < 300) {
+    fireDart(swipeStart.x, swipeStart.y, t.clientX, t.clientY);
+  }
+  swipeStart = null;
+});
+
+function fireDart(x1, y1, x2, y2) {
+  const dart = document.createElement('div');
+  dart.className = 'dart-visual';
+  document.body.appendChild(dart);
+
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  dart.style.left = x1 + 'px';
+  dart.style.top = y1 + 'px';
+  dart.style.transform = `rotate(${angle + Math.PI/2}rad)`;
+
+  const anim = dart.animate([
+    { transform: `translate(0,0) rotate(${angle + Math.PI/2}rad)`, opacity: 1 },
+    { transform: `translate(${(x2-x1)*3}px, ${(y2-y1)*3}px) rotate(${angle + Math.PI/2}rad)`, opacity: 0 }
+  ], { duration: 400, easing: 'ease-out' });
+
+  anim.onfinish = () => {
+    dart.remove();
+    checkHit(x2, y2);
+  };
+}
+
+function checkHit(x, y) {
+  let hit = false;
+  activeBalloons.forEach(b => {
+    const rect = b.getBoundingClientRect();
+    if (x > rect.left - 20 && x < rect.right + 20 && y > rect.top - 20 && y < rect.bottom + 20) {
+      popBalloon(b);
+      hit = true;
+    }
+  });
+
+  if (!hit) {
+    document.getElementById('balloon-arena').classList.add('shake');
+    setTimeout(() => document.getElementById('balloon-arena').classList.remove('shake'), 300);
+  }
+}
+
+function popBalloon(b) {
+  b.classList.add('popping');
+  if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+  
+  const card = document.getElementById('msg-card');
+  const text = document.getElementById('msg-text');
+  
+  card.classList.add('pulse');
+  text.textContent = memories[balloonPops];
+  text.classList.add('visible');
+  
+  document.getElementById(`d1-${balloonPops}`).classList.add('filled');
+  
+  balloonPops++;
+  setTimeout(() => card.classList.remove('pulse'), 400);
+
+  if (balloonPops >= 3) {
+    document.getElementById('btn-next').disabled = false;
+    burstHearts(20);
+  }
+}
+
+function burstHearts(n) {
+  for (let i = 0; i < n; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-float';
+    h.innerHTML = '❤️';
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    document.getElementById('hearts-layer').appendChild(h);
+    setTimeout(() => h.remove(), 3000);
+  }
+}
+</script>
+</body>
+</html>
